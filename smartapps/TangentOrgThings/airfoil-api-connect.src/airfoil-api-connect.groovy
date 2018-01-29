@@ -1,4 +1,32 @@
-// Update
+// vim :set ts=2 sw=2 sts=2 expandtab smarttab :
+/*
+The MIT License (MIT)
+
+Copyright (c) 2018 Brian Aker <brian@tangent.org>
+Copyright (c) 2015 Jesse Newland
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+ */
+
+/* 
+Forked from https://github.com/jnewland/airfoil-api-smartthings
+*/
 definition(
   name: "Airfoil API Connect",
   namespace: "TangentOrgThings",
@@ -114,51 +142,51 @@ def locationHandler(evt) {
 
     if (body instanceof java.util.HashMap)
     { //POST /speakers/*/* response
-      def speakers = atomicState.speakers.collect { s ->
-        if (s.id == body.id) {
-          body
-        } else {
-          s
-        }
+    def speakers = atomicState.speakers.collect { s ->
+      if (s.id == body.id) {
+        body
+      } else {
+        s
       }
-      atomicState.speakers = speakers
-      log.trace "Set atomicState.speakers to ${speakers}"
-      def dni = app.id + "/" + body.id
-      def d = getChildDevice(dni)
-      if (d) {
-        if (body.connected == "true") {
-          sendEvent(d.deviceNetworkId, [name: "switch", value: "on"])
-        } else {
-          sendEvent(d.deviceNetworkId, [name: "switch", value: "off"])
-        }
-        if (body.volume) {
-          def level = Math.round(body.volume * 100.00)
-          sendEvent(d.deviceNetworkId, [name: "level", value: level])
-        }
+    }
+    atomicState.speakers = speakers
+    log.trace "Set atomicState.speakers to ${speakers}"
+    def dni = app.id + "/" + body.id
+    def d = getChildDevice(dni)
+    if (d) {
+      if (body.connected == "true") {
+        sendEvent(d.deviceNetworkId, [name: "switch", value: "on"])
+      } else {
+        sendEvent(d.deviceNetworkId, [name: "switch", value: "off"])
       }
+      if (body.volume) {
+        def level = Math.round(body.volume * 100.00)
+        sendEvent(d.deviceNetworkId, [name: "level", value: level])
+      }
+    }
     }
     else if (body instanceof java.util.List)
     { //GET /speakers response (application/json)
-      def bodySize = body.size() ?: 0
-      if (bodySize > 0 ) {
-        atomicState.speakers = body
-        body.each { s ->
-          def dni = app.id + "/" + s.id
-          def d = getChildDevice(dni)
-          if (d) {
-            if (s.connected == "true") {
-              sendEvent(d.deviceNetworkId, [name: "switch", value: "on"])
-            } else {
-              sendEvent(d.deviceNetworkId, [name: "switch", value: "off"])
-            }
-            if (s.volume) {
-              def level = Math.round(s.volume * 100.00)
-              sendEvent(dni, [name: "level", value: level])
-            }
+    def bodySize = body.size() ?: 0
+    if (bodySize > 0 ) {
+      atomicState.speakers = body
+      body.each { s ->
+        def dni = app.id + "/" + s.id
+        def d = getChildDevice(dni)
+        if (d) {
+          if (s.connected == "true") {
+            sendEvent(d.deviceNetworkId, [name: "switch", value: "on"])
+          } else {
+            sendEvent(d.deviceNetworkId, [name: "switch", value: "off"])
+          }
+          if (s.volume) {
+            def level = Math.round(s.volume * 100.00)
+            sendEvent(dni, [name: "level", value: level])
           }
         }
-        log.trace "Set atomicState.speakers to ${speakers}"
       }
+      log.trace "Set atomicState.speakers to ${speakers}"
+    }
     }
     else
     {
@@ -276,9 +304,9 @@ private poll() {
   def uri = "/speakers"
   log.debug "GET:  $uri"
   sendHubCommand(new physicalgraph.device.HubAction("""GET ${uri} HTTP/1.1
-HOST: ${ip}:${port}
+  HOST: ${ip}:${port}
 
-""", physicalgraph.device.Protocol.LAN, "${ip}:${port}"))
+  """, physicalgraph.device.Protocol.LAN, "${ip}:${port}"))
 }
 
 private post(path, text, dni) {
@@ -287,11 +315,11 @@ private post(path, text, dni) {
 
   log.debug "POST:  $uri"
   sendHubCommand(
-      new physicalgraph.device.HubAction(
-        """POST ${uri} HTTP/1.1\r\nHOST: $ip:$port\r\nContent-length: ${length}\r\nContent-type: text/plain\r\n\r\n${text}\r\n""",
-        physicalgraph.device.Protocol.LAN,
-        dni
-      )
+    new physicalgraph.device.HubAction(
+      """POST ${uri} HTTP/1.1\r\nHOST: $ip:$port\r\nContent-length: ${length}\r\nContent-type: text/plain\r\n\r\n${text}\r\n""",
+      physicalgraph.device.Protocol.LAN,
+      dni
+    )
   )
 
 }
