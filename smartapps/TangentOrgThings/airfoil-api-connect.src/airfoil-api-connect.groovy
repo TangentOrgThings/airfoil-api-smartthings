@@ -1,6 +1,7 @@
+// Update
 definition(
   name: "Airfoil API Connect",
-  namespace: "jnewland",
+  namespace: "TangentOrgThings",
   author: "Jesse Newland",
   description: "Connect to a local copy of Airfoil API to add and control Airfoil connected Speakers",
   category: "SmartThings Labs",

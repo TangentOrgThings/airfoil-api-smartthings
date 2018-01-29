@@ -1,5 +1,6 @@
+// Update -- NOTE
 metadata {
-  definition (name: "Airfoil Speaker", namespace: "airfoil", author: "Jesse Newland") {
+  definition (name: "Airfoil Speaker", namespace: "TangentOrgThings", author: "Jesse Newland") {
     capability "Switch"
     capability "Switch level"
     capability "Refresh"
